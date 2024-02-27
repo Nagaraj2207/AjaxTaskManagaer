@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/trademark.png' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+     integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <title>Task Manager App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+    integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" 
+    integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>      
+    <link rel="stylesheet" href="{% static "css/task_manage.css" %}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg fixed-top" style="background-color: #e3f2fd;">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{% url "task_manage" %}">
+        <img src="{% static "images/task.png" %}" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+        &nbsp TaskManager</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse " id="navbarNav">
+          <ul class="navbar-nav"> 
+              <li class="nav-item">
+              <a class="nav-link" href="{% url "task_manage" %}">Home</a>
+              </li>
+        </div>
+      </div>
+    </nav>
+    <div class="container mt-5">
+      <form method="post"  id="form" class="task-form bg-light p-4 rounded was-validated">
+          {% csrf_token %}
+          <h1 class="mb-4">Add New Task </h1>
+          <div class="row">
+              <div class="col-md-6">
+                  <input type="hidden" id="taskid" name="taskid">
+                  <div class="mb-3">
+                      <label for="title">Task Title:</label>
+                      <input type="text" id="title" name="title" class="form-control" required placeholder="Enter the title">
+                      <div class="valid-feedback">Valid.</div>
+                      <div class="invalid-feedback">Please fill out this field.</div>
+                    </div>
+                  <div class="mb-3">
+                      <label for="description">Description:</label>
+                      <textarea class="form-control" id="description" name="description" required placeholder="Enter task description" rows="3"></textarea>
+                      <div class="valid-feedback">Valid.</div>
+                      <div class="invalid-feedback">Please fill out this field.</div>
+                    </div>
+              </div>
+              <div class="col-md-6">
+                  <div class="mb-3">
+                      <label for="completed">Completed:</label>
+                      <select class="form-select" id="completed" name="completed" aria-label="Select completed status">
+                          <option value="no">No</option>
+                          <option value="yes">Yes</option>
+                      </select>
+                      <div class="valid-feedback">Valid.</div>
+                      <div class="invalid-feedback">Please fill out this field.</div>
+                    </div>
+                  <div class="mb-3">
+                      <label for="due_date">Due Date:</label>
+                      <input type="datetime-local" id="due_date" name="due_date" class="form-control" required>
+                      <div class="valid-feedback">Valid.</div>
+                      <div class="invalid-feedback">Please fill out this field.</div>
+                  </div>
+                  <div class="mb-3">
+                      <label for="priority">Priority:</label>
+                      <select class="form-select" id="priority" name="priority" required aria-label="Select priority">
+                          <option value="high">High</option>
+                          <option value="medium">Medium</option>
+                          <option value="low">Low</option>
+                      </select>
+                      <div class="valid-feedback">Valid.</div>
+                      <div class="invalid-feedback">Please fill out this field.</div>
+                    </div>
+              </div>
+          </div>
+          <center><button type="submit" id="addtask" class="btn btn-primary">Submit</button></center>
+      </form>
+      <div class="table-responsive">
+        
+        <table class="table table-borderless mb-0">
+          <thead>
+            <tr>
+              <th colspan="7" style="text-align: center;background-color: antiquewhite;"><h1>Task Table</h1></th>
+            </tr>
+            <tr>
+              <th scope="col">S/N</th>
+              <th scope="col">Title</th>
+              <th scope="col">Description</th>
+              <th scope="col">Completed</th>
+              <th scope="col">Due_date</th>
+              <th scope="col">Priority</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+            {% for task in tasks %}
+            <tr>
+              <td>{{forloop.counter}}</td>
+              <td>{{task.title}}</td>
+              <td>{{task.description}}</td>
+              <td>{{task.completed}}</td>
+              <td>{{task.due_date}}</td>
+              <td>{{task.priority}}</td>
+              <td>
+                  <input type="button" value="Edit" class="btn btn-primary btn-sm btn-edit px-3" task-id="{{ task.id }}">
+                  <input type="button" value="X" class="btn btn-danger btn-sm btn-del px-3" task-id="{{ task.id }}">
+              </td>
+            </tr>
+            {% endfor %}      
+          </tbody>
+        </table>
+      </div>
+<script>
+        $("#addtask").click(function (e) {
+            e.preventDefault()
+
+            output = ""
+            let taskid = $("#taskid").val();
+            let title = $('#title').val();
+            let description = $("#description").val()
+            let completed = $("#completed").val()
+            let due_date = $("#due_date").val()
+            let priority = $("#priority").val()
+  
+            mydata = {taskid:taskid,title:title,description:description,completed:completed,due_date:due_date,priority:priority}
+            $.ajax({
+                url:"{% url 'add_task' %}",
+                type:"POST",
+                data:mydata,
+                success:function(data){
+                    $("#title").removeAttr("disabled")
+                    $("#description").removeAttr("disabled")
+                    $("#due_date").removeAttr("disabled")
+                    $("#priority").removeAttr("disabled")
+                    x = data.task_data
+                    console.log(x)
+                    if(data.status == "Saved"){
+                      console.log("add task");
+                    for (i=0; i<x.length; i++) {
+                        output += "<tr><td>" + (i+1) +
+                                "</td><td>" + x[i].title +
+                                "</td><td>" + x[i].description +
+                                "</td><td>" + x[i].completed+
+                                "</td><td>" + x[i].due_date +
+                                "</td><td>" + x[i].priority +
+                                "</td><td> <input type='button' value='Edit' class='btn btn-primary btn-edit btn-sm px-3' task-id= "+ x[i].id + "> <input type='button' value='X' class='btn btn-danger btn-sm btn-del px-3' task-id = "+ x[i].id +">"
+                            
+                    }
+                    $("#tbody").html(output)
+                    $("#form")[0].reset()
+                    $("#taskid").val("")
+                    }
+                }
+            })
+            
+        })
+
+        $("#tbody").on("click", ".btn-del", function(){
+
+          let id = $(this).attr("task-id")
+          mydata = {taskid:id}
+          mythis = $(this)
+          $.ajax({
+            url: "{% url 'delete_task' %}",
+            method: "POST",
+            data: mydata,
+            success: function(data){
+              if(data.status == 1){
+              $(mythis).closest("tr").fadeOut();
+              }            
+            }
+          })
+        })
+
+      $('#tbody').on("click", ".btn-edit", function(){
+      
+      let id = $(this).attr("task-id");
+
+      
+      mydata = {taskid:id}
+
+    $.ajax({
+
+        url: "{% url 'update_task' %}",
+        method:"POST",
+        data:mydata, 
+
+        success: function(data){
+          console.log("Task found");
+          console.log(data) 
+        if (data.status != "Task not found"){
+          console.log("Task found");
+            
+          $("#taskid").val(data.id)
+          $("#title").val(data.title)
+          $("#description").val(data.description)
+          $("#completed").val(data.completed)
+          $("#due_date").val(data.due_date)
+          $("#priority").val(data.priority)
+          $("#title").attr("disabled", "disabled")
+          $("#description").attr("disabled", "disabled")
+          $("#due_date").attr("disabled","disabled")
+          $("#priority").attr("disabled","disabled")
+          
+        }
+
+        }
+    })
+})
+</script>
+</body>
+</html>

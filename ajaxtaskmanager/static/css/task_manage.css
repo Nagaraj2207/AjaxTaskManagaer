@@ -1,0 +1,44 @@
+body{
+    background-color: darkgray;
+}   
+
+.task-form {
+    margin-top: 10%;
+    width: 30%;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+  }
+
+  .table-responsive .table{
+    position: absolute;
+    top:21%;
+    left: 34%;
+    width: 60%;
+  }
+  
+  .task-form h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .task-form button{
+    width: 50%;
+    margin-top: 20px;
+  }
+  
+  .navbar-nav .nav-item .nav-link {
+    padding: 10px 20px;
+    color: black;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .navbar-nav .nav-item .nav-link:hover {
+    background-color: #2980b9;
+    transform: scale(1.05);
+    color: white;
+    text-decoration: none;
+  }
+  
+  
